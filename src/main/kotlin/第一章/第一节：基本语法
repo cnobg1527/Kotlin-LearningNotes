@@ -1,0 +1,121 @@
+1.包定义和导入：包规范应放在源文件的顶部
+    package my.demo
+    import kotlin.text.*
+
+2.Kotlin 应用程序的入口点是main（）函数。
+    fun main() {
+        println("Hello world!")
+    }
+
+3.fun关键字 定义一个函数：具有两个参数和返回类型的函数
+    fun sum(a: Int, b: Int): Int {
+        return a + b
+    }
+    上面函的简写 具有表达式体和推断返回类型的函数，这种写法只在没有其他执行语句时适用
+    fun sum(a: Int, b: Int) = a + b
+
+    返回类型为空时默认为Unit，此时的unit可以不写
+    fun printSum(a: Int, b: Int): Unit {
+        println("sum of $a and $b is ${a + b}")
+    }
+    按条件返回值的函数
+    fun maxOf(a: Int, b: Int) = if (a > b) a else b //如果a>b返回a 否则返回b
+
+4.定义变量
+    1.只读局部变量使用关键字val定义：
+    val   name   ： int =  值        //在定义变量如果已经赋值的情况，类型可以默认不写，kotlin自动进行类型推断
+    关键字 变量名 冒号 类型 = 变量值
+
+    2.可重赋值的变量使用关键字var定义：
+    var  name   ： int =  值
+    关键字 变量名 冒号 类型 = 变量值
+
+    3.顶级变量：指定义在函数或类外部的全局变量，该变量不加权限修饰符 默认可被整个项目看到。
+    val PI = 3.14
+    var x = 0
+
+    fun incrementX() {
+        x += 1
+    }
+
+5.注释
+    Kotlin 支持单行（或行末）和多行 （块）注释
+    //             支持单行 或语句末尾注释
+    /*注释内容*/     支持多行注释 或嵌套注释
+
+6.字符串模板 通过$符或者${}将变量值引用至字符串
+    var age = 18
+    var name = ”张三“
+    var str = “$name的年龄为$age岁”
+
+7.空值和空检查符？
+    fun getStringLenth(obj:Any):int?{                           //在kotlin中Any类是所有类的基类
+        if(obj is String && obj.lenth > 0) return obj.lenth     //这里用到了is关键字，取反则是！is
+        return null
+    }
+
+8.循环语句
+    1.for循环
+        val items = listOf("apple", "banana", "kiwifruit") //val定义的列表不能被修改
+        for (item in items) {
+            println(item)
+        }
+        或者
+        val items = listOf("apple", "banana", "kiwifruit")
+        for (index in items.indices) {
+            println("item at $index is ${items[index]}")
+        }
+    2.while循环
+        val items = listOf("apple", "banana", "kiwifruit")
+        var index = 0
+        while (index < items.size) {
+            println("item at $index is ${items[index]}")
+            index++
+        }
+
+    3.when表达式
+        fun describe(obj: Any): String =
+            when (obj) {
+                1          -> "One"
+                "Hello"    -> "Greeting"
+                is Long    -> "Long"
+                !is String -> "Not a string"
+                else       -> "Unknown"             //when语句中的else是必须的，除非非常确定程序不会出现未知选项
+            }
+
+9.范围range
+    var i = 10
+    var j = i..100      //在kotlin中用..表示范围，当前表示10-100包括100
+    var k = 1..35
+
+        var range = 10
+        for (i in range..20) print("$i ,")          //将输出10-20 包括20
+        for (i in range until 20 ) print("$i ,")    //将输出10-19 不包括20
+        for (i in 1..10 step 2) print("$i ,")       //输出1-10 步长为2
+        for (i in 9 downTo 1) print("$i ,")         //输出9-1
+        for (i in 9 downTo 1 step 3) print("$i ,")  //输出9-1 步长为3
+
+10.集合数据类型的遍历 与条件筛选
+    val fruit = listOf("apple","banana","kiwifruit")
+    for(i in fruit) println(i)  //遍历
+
+    fun findFruit(fruitName:String):String {
+         return when(fruitName){
+            "apple" ->  "苹果"
+            "orange" ->  "橘子"
+            "kiwifruit" ->  "猕猴桃"
+            else -> "没有这种水果"
+        }
+    }
+
+11.使用 lambda 表达式筛选和映射集合
+    val fruits = listOf("banana", "avocado", "apple", "kiwifruit")
+    fruits
+      .filter { it.startsWith("a") } //filter，map 等都是全局高阶函数 先过滤a开头的单词
+      .sortedBy { it }                 //再排序
+      .map { it.toUpperCase() }         //再通过map函数映射，转换为大写，map、filter，forEach等函数本身又调用的是函数
+      .forEach { println(it) }          //输出
+
+
+
+
