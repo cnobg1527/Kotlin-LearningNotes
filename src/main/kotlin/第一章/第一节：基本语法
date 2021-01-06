@@ -20,6 +20,9 @@
     }
     按条件返回值的函数
     fun maxOf(a: Int, b: Int) = if (a > b) a else b //如果a>b返回a 否则返回b
+    单表达式函数
+    fun theAnswer() = 42
+
 
 4.定义变量
     1.只读局部变量使用关键字val定义：
@@ -110,7 +113,7 @@
 
 11.使用 lambda 表达式筛选和映射集合
     val fruits = listOf("banana", "avocado", "apple", "kiwifruit")
-    fruits
+    fruits //注意这里调用方法用的时大括号
       .filter { it.startsWith("a") } //filter，map 等都是全局高阶函数 先过滤a开头的单词
       .sortedBy { it }                 //再排序
       .map { it.toUpperCase() }         //再通过map函数映射，转换为大写，map、filter，forEach等函数本身又调用的是函数

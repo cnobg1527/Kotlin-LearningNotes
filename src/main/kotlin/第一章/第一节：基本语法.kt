@@ -1,8 +1,16 @@
 package 第一章
 
 fun main() {
+    //if , else if, else的判断语句，必要时最好用when
+    println("输入一个数字")
+    var a = readLine()?.toInt()
+    if (a!! > 20) println("大于20")
+    else if (a!! > 10) println("在10-20之间")
+    else if (a!! > 0) println("很小")
+    else println("未知数")
+
     //for循环
-    val items = listOf("apple", "banana", "kiwifruit")//val定义的普通列表不能被修改，除非改为可变列表MutablelistOf
+    val items = listOf("apple", "banana", "kiwifruit")//val定义的普通列表不能被修改，除非改为可变列表MultipleListOf
     //不能执行下面的重新赋值语句
     //items[1] = "orange"
     for (index in items.indices) {

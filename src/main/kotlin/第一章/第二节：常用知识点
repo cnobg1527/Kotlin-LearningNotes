@@ -1,0 +1,70 @@
+1.？与！！
+    ！！非空断言
+    ？ 非空检测
+    ?: throw...   如果为空 则抛出异常
+
+2.用data关键字创建数据类默认有一下方法
+    data class Customer(val name: String, val email: String)
+    getters (and setters in case of vars) for all properties //对所有属性都默认有getter，setter方法
+    equals()
+    hashCode()
+    toString()
+    copy()
+    component1(), , …, for all properties (see Data classescomponent2())//component指的就是构造器里面的某个参数，
+    从1开始排序，如果时component2 得到的就是email
+
+3.函数或者类构造器的默认参数，设置默认参数的好处在于，即使忘记传参数，依然能正常运行
+    fun add(a: Int = 0, b: String = "") { ... }
+
+4.全局高阶函数filter
+    val numList = listOf(1,2,3,4,5,6,7,8,9) //it指的就是集合中的每个item
+        val l = numList.filter {(it > 4 )}  //这里也可以用lambda表达式val l = numList.filter {(i —> i > 4 )}
+        l.forEach { println(it) }
+
+5.成员或实例判断关键字 in is
+    if (i in emailsList) { ... } //如果i在这个列表里，执行。。。操作
+    when (x) {                   //当x是某个类的实例时， 执行。。操作
+        is Foo -> ...
+        is Bar -> ...
+        else   -> ...
+    }
+
+6.遍历map或list
+    for ((k, v) in map) {
+        println("$k -> $v")
+    }
+
+7.创建只读对象，map和list都有好多方法用于遍历查找，有空要多练习
+    val list = listOf("a", "b", "c")        //只读列表，可通过索引操作
+    val map = mapOf("a" to 1, "b" to 2, "c" to 3)//只读map，键值之间用to链接，通过键索引操作获取值
+
+8.为某个已存在的类扩展方法
+    class A
+    fun A. add (i:int,j:int): int = i+j         //扩展方法最好放在该类外部作用域中 以供其他模块调用，而不是在main入口中扩展
+    fun 类.方法（参数1..参数n）：返回类型 {代码段}
+
+9.在实例对象上调用多个方法
+    class Turtle {
+        fun penDown()
+        fun penUp()
+        fun turn(degrees: Double)
+        fun forward(pixels: Double)
+    }
+    val myTurtle = Turtle()
+    with(myTurtle) {                 //with关键字，好处在于省去了对象前缀，直接使用方法名.方法作用于该对象上
+        penDown()
+        for (i in 1..4) {
+            forward(100.0)
+            turn(90.0)
+        }
+        penUp()
+    }
+
+10.交换两个变量
+    var a = 1;var c = 33        //在同一行声明多个变量用;隔开
+    var b = 2
+    a = b.also { b = a }
+
+11.TODO（）：将代码标记为不完整，供之后改进
+    fun calcTaxes(): BigDecimal = TODO("Waiting for feedback from accounting")
+
