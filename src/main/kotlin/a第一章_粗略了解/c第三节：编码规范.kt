@@ -1,4 +1,4 @@
-package 第一章_粗略了解
+package a第一章_粗略了解
 
 open class Human(val name:String, val age:Int){
 
