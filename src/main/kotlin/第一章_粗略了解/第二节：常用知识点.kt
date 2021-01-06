@@ -1,4 +1,4 @@
-package 第一章
+package 第一章_粗略了解
 
 
 data class Person(val name: String, val id: Int, val age: Int)//data关键字创建数据类

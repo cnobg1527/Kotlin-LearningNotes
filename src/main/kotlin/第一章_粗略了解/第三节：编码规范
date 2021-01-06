@@ -1,0 +1,219 @@
+1.项目名称
+    com.公司(个人)名称.应用名
+
+2.源文件名称
+    创建包名 全部小写英文字母，使用中文字符可能会造成异常
+    如果 Kotlin文件包含单个或多个类，则其名称应与类的名称相同，使用大驼峰体(SomeClass)并附加 .kt 扩展名
+
+3.定义类
+    通常，类的内容按以下顺序排序：
+    --属性声明和初始化器块
+    --辅助构造函数
+    --方法声明
+    --辅助对象
+    将相关内容放在一起，以便从上到下阅读类的人可以遵循所发生内容的逻辑。
+
+4.实现接口
+    实现接口时，保持实现成员与接口成员的顺序相同
+
+5.类，对象，函数命名
+    类和对象的名称以大写字母开头，并使用 camel 大小写
+        open class DeclarationProcessor { /*...*/ }
+        object EmptyDeclarationProcessor : DeclarationProcessor() { /*...*/ }
+    函数、属性和局部变量的名称以小写字母开头，使用 camel 大小写，并且没有下划线
+        fun processDeclarations() { /*...*/ }
+        var declarationCount = 1
+    异常：用于创建类实例的工厂函数可以与抽象返回类型具有相同的名称
+        interface Foo { /*...*/ }
+        class FooImpl : Foo { /*...*/ }
+        fun Foo(): Foo { return FooImpl() }
+    常量的名称应使用大写下划线分隔名称                       //const(常量)关键字 和val都可以定义常量
+        const val MAX_COUNT = 8
+        val USER_NAME_FIELD = "UserName"
+    如果类有两个属性在概念上相同，但一个属性是公共 API 的一部分，另一个是实现详细信息，请使用下划线作为私有属性名称的前缀
+        class C {
+            private val _elementList = mutableListOf<Element>()
+
+            val elementList: List<Element>
+                 get() = _elementList
+        }
+
+    函数、属性和局部变量的名称以小写字母开头，使用 camel 大小写，并且没有下划线：
+         fun processDeclarations() { /*...*/ }
+         var declarationCount = 1
+
+    异常：用于创建类实例的工厂函数可以与抽象返回类型具有相同的名称：
+        interface Foo { /*...*/ }
+        class FooImpl : Foo { /*...*/ }
+        fun Foo(): Foo { return FooImpl() }
+
+    如果类有两个属性在概念上相同，但一个属性是公共 API 的一部分，另一个是实现详细信息，请使用下划线作为私有属性名称的前缀：
+    class C {
+        private val _elementList = mutableListOf<Element>()
+
+        val elementList: List<Element>
+             get() = _elementList
+    }
+    选择好名字
+        类的名称通常是名词或名词短语，解释类的是什么： ListPersonReader
+        方法的名称通常是动词或动词短语，表示该方法的用法：例如，是就地对集合进行排序，而返回集合的排序副本。closereadPersonssortsorted
+        名称应明确实体的用途，因此最好避免在名称中使用无意义的单词（等）。ManagerWrapper
+        使用首字母缩略词作为声明名称的一部分时，如果该词像由两个字母组成（）;如果第一个字母较长则仅大写。
+        IOStream XmlFormatter HttpInputStream
+
+6.格式
+    使用四个空格进行缩进//在全文中注意空格的使用，ctrl+alt+l 格式化代码
+    对于大括号，将左大括号放在构造开始行的末尾，将左大括号放在与打开构造水平对齐的单独行上
+    if (elements != null) {
+        for (element in elements) {
+            // ...
+        }
+    }
+
+7.创建类注意点
+    具有几个主构造函数参数的类可以在一行中写入：class Person(id: Int, name: String)
+    如果我们使用继承，则超类构造函数调用或实现接口列表应位于与括号相同的行上
+        class Person(
+            id: Int,
+            name: String,
+            surname: String             //参数较多时换行
+        ) : Human(id, name) { /*...*/ }//传递给超类的参数 位于括号相同行
+    对于多个接口，超类构造函数调用应首先定位，然后每个接口应位于不同的行中：
+        class Person(
+            id: Int,
+            name: String,
+            surname: String
+        ) : Human(id, name),
+            KotlinMaker { /*...*/ }
+    对于具有长超类型列表的类，在冒号后放置一个行分隔线，并水平对齐所有超类型名称：
+        class MyFavouriteVeryLongClassHolder :
+            MyLongHolder<MyFavouriteVeryLongClass>(),
+            SomeOtherInterface,
+            AndAnotherOne {
+
+            fun foo() { /*...*/ }
+        }
+
+8.修饰符顺序，请按以下顺序排列
+    public(默认)整个程序可见 / protected子类可见 / private自己可见 / internal内部类 //修饰可见性
+    expect / actual当前
+    final不能被继承(默认) / open可被继承 / abstract抽象 / sealed密封 / const常量修饰
+    external外部
+    override重写
+    lateinit稍后初始化
+    tailrec尾部保存结果？
+    vararg
+    suspend
+    inner内部
+    enum 枚举类/ annotation 注释/ fun 函数声明// as a modifier in `fun interface`
+    companion
+    inline内联
+    infix 中缀修饰？
+    operator运算重载？
+    data 数据类声明
+
+9.函数格式
+    如果函数签名不适合在一行中，请使用以下语法：
+        fun longMethodName(
+            argument: ArgumentType = defaultValue,
+            argument2: AnotherArgumentType,
+        ): ReturnType {
+            // body
+        }
+    简单结构函数多用表达式
+        fun foo(): Int {     // bad
+            return 1
+        }
+
+        fun foo() = 1        // good
+
+    fun f(x: String, y: String, z: String) =        //过长建议换行
+        veryLongFunctionCallWithManyWords(andLongParametersToo(), x, y, z)
+
+10.包装链式调用时，将字符或运算符放在下一行上，并带一个缩进：.?.
+   val anchor = owner
+       ?.firstChild!!
+       .siblings(forward = true)
+       .dropWhile { it is PsiComment || it is PsiWhiteSpace }
+
+11.尾随逗号是一系列元素的最后一项之后的逗号符号：
+   class Person(
+       val firstName: String,
+       val lastName: String,
+       val age: Int, // trailing comma
+   使用尾随逗号有几个好处：
+   它使版本控制差异更简洁， 因为所有的焦点都放在更改的值上。
+   它使添加和重新排序元素变得容易 - 如果您操作元素，就无需添加或删除逗号。
+   例如，它简化了对象初始化器的代码生成。最后一个元素也可以有一个逗号
+   enum class Direction {        //枚举类常量列表
+       NORTH,
+       SOUTH,
+       WEST,
+       EAST, // trailing comma
+   }
+
+   shift(
+       25,
+       20, // trailing comma
+   )
+
+   val colors = listOf(         //特殊变量定义
+       "red",
+       "green",
+       "blue", // trailing comma
+   )
+   class Customer(
+       val name: String,
+       val lastName: String, // 类主构造参数列表
+   )
+    constructor(
+        x: Comparable<Number>,
+        y: Iterable<Number>, // 类副构造器参数列表
+    ) {}
+
+    fun isReferenceApplicable(myReference: KClass<*>) = when (myReference) {
+        Comparable::class,
+        Iterable::class,
+        String::class, // trailing comma尾部逗号
+            -> true
+        else -> false
+    }
+
+
+12.文档注释
+    短注释可以放在一行上：
+    /** This is a short documentation comment. */
+
+    对于较长的文档注释，请将开盘放在单独的行上，然后用星号开始每行后续行：/**
+    /**
+     * This is a documentation comment
+     * on multiple lines.
+     */
+
+13.其它注意点
+   避免冗余构造
+   函数没有返回，则应省略返回类型unit
+   尽可能省略分号
+   考虑使用默认参数值声明函数  ？
+   在具有参数的嵌套 lambdas 中，应始终显式声明it参数。
+   多用if try when 表达式
+   return if (x) foo() else bar()
+   return when(x) {
+       0 -> "zero"
+       else -> "nonzero"
+   }
+   使用高阶函数来循环filter map forEach
+   使用字符串模板来字符串串联
+   class Point(val x: Double, val y: Double) {
+       companion object {       //伴侣对象内声明的方法 只能由类调用，不能被继承
+           fun fromPolar(angle: Double, radius: Double) = Point(...)
+       }
+   }
+
+
+
+
+
+
+
+
