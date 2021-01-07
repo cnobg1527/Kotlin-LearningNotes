@@ -1,0 +1,120 @@
+1数字
+    Type	Size (bits)	Min value	                             Max value
+    Byte	8	         -128	                                   127
+    Short	16	         -32768	                                   32767
+    Int  	32	         -2,147,483,648 (-231)	                   2,147,483,647 (231 - 1)
+    Long	64	         -9,223,372,036,854,775,808 (-263)  	   9,223,372,036,854,775,807 (263 - 1)
+    Float	32
+    Double	64
+    注意点；
+        1.如果没有显式声明数字类型，默认类型推断，整数为Int 小数为Double
+        2.浮点数以f F结尾，长整型一L结尾，二进制0b开头，16进制0x开头，kotlin不支持8进制
+        3.支持下划线链接增强可读性
+            val oneMillion = 1_000_000
+            val creditCardNumber = 1234_5678_9012_3456L
+            val socialSecurityNumber = 999_99_9999L
+            val hexBytes = 0xFF_EC_DE_5E
+            val bytes = 0b11010010_01101001_10010100_10010010
+
+        4.再运算时 较小的类型 会 隐式转换为较大的类型
+            可以秉承先运算再转换的原则，将结果转换为任意类型
+            var test8  = (b + l).toByte()       //先运行再转换
+
+        5.每个数字类型都支持以下转换：
+            toByte(): Byte
+            toShort(): Short
+            toInt(): Int
+            toLong(): Long
+            toFloat(): Float
+            toDouble(): Double
+            toChar(): Char
+
+        6.运算符重载。+-*/%
+            任何数与小数运算得小数
+            整数/整数 不能整除时丢掉余数
+            %运算的结果 和被模数数据类型一致
+            *再不能确定类型的时候，建议先运算再转换类型
+2.位运算
+    shl(bits) – signed shift left       //有符号左移
+    shr(bits) – signed shift right      //有符号右移
+    ushr(bits) – unsigned shift right   //无符号右移
+    and(bits) – bitwise and             //按位与
+    or(bits) – bitwise or               //按位或
+    xor(bits) – bitwise xor             //按位异或
+    inv() – bitwise inversion           //按位反转
+
+3.比较运算，返回Boolean值
+    相等性检查：和a == ba != b
+    比较运算符：a < b  a > b  a <= b  a >= b
+    范围实例化和范围检查：a..b    x in a..b      x !in a..b
+
+4.字符char
+    字符字面以单引号表示：'a'
+    可以使用反斜杠转义特殊字符。\t\b\n\r\'\"\\\$'\uFF00'
+    我们可以显式将字符转换为数字：
+        var c: Char= '6'
+        c !in '0'..'9'
+
+5.布尔
+    布尔 有两个值：true和false
+
+    ||• 懒惰的分离 //只要前面条件满足，就不再检查后面的条件
+    &&• 惰性连结    //只要前面条件不满足，就不再检查后面
+    !- 否定
+
+6.数组
+    要创建数组，可以使用库函数将项值传递给它，以便创建数组 。
+    或者，库函数可用于创建填充空元素的给定大小的数组。
+    arrayOf()   //根据值 创建固定长度数组，一但创建就不能改变
+    MutableList() //创建可变长度数组
+    arrayOf(1, 2, 3) //长度3的数组
+    arrayOfNulls()  //创建指定长度的数组， 里面放null
+         var nulls = arrayOfNulls<String>(9)//创建长度9的 没有值的 空数组
+            nulls[3] = "我" 普通赋值表达式
+            "I love you".also { nulls[3] = it } //赋值表达式
+
+
+7.原始数组
+    Kotlin 还具有专用类来表示基元类型的数组，而无需装箱开销：
+    这些类与类没有继承关系，但它们具有相同的一组方法和属性。每个工厂还具有相应的工厂功能：
+    ByteArray
+    ShortArray
+    IntArray
+    Array
+    Array(4){1}.forEach { println(it)  } //Array类初始化数组
+
+
+8.无符号整数
+    Kotlin 介绍了无符号整数的以下类型：
+    kotlin.UByte：一个无符号的 8 位整数，范围从 0 到 255
+    kotlin.UShort： 一个未签名的 16 位整数，范围从 0 到 65535
+    kotlin.UInt：一个未签名的 32 位整数，范围从 0 到 2+32 - 1
+    kotlin.ULong: an unsigned 64-bit integer, ranges from 0 to 2^64 - 1
+    数组
+    kotlin.UByteArray： 未签名字节数组
+    kotlin.UShortArray： 一系列未签名的短裤
+    kotlin.UIntArray： 无符号 int 的数组
+    kotlin.ULongArray： 无符号长数组
+
+9.字符串String
+    支持双引号和三引号(可跨行)
+        var s = "hello"
+        var s = """hello
+                    world"""
+    字符串是不可变的，索引操作可以访问的字符
+    可以使用 for -循环迭代字符串：Strings[i]
+    您可以使用+运算符拼接字符串。
+        任何值 + 字符串 = 字符串
+    多使用字符串模板
+    var name = "cheng"
+    var prt = "$name say something"
+
+
+
+
+
+
+
+
+
+

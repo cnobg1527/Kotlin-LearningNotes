@@ -1,0 +1,29 @@
+1.包声明
+    源文件可以从包声明开始，这是必须的，通常在创建时自动生成。
+        package org.example
+        fun printMessage() { /*...*/ }
+        class Message { /*...*/ }
+        // ...
+    源文件的所有内容（如类和函数）都包含在声明的包中
+
+2.包导入
+    我们可以导入单个名称，例如。
+    import org.example.Message //只导入了上面包中的一个方法
+
+    作用域的所有可访问内容（包、类、对象等）：
+    import org.example.* //导入该包下的所有方法 属性 类变量等
+
+    如果存在名称冲突，我们可以使用as 关键字在本地重命名冲突实体来消除歧义：
+    import org.example.Message
+    import org.test.Message as testMessage //给重名的方法取个别名
+
+
+
+
+
+
+
+
+
+
+
