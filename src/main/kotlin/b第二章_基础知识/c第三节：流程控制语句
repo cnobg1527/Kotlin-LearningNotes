@@ -1,0 +1,121 @@
+kotlin中主要包括以下流程控制语句
+1.if ，else if， else
+    fun main() {
+        var a = 3
+        var b = 3
+        var c = if (a > b){
+            println(a)
+            a               //条件满足会把a的值 赋值给c
+        }else if (a < b){
+            println(b)
+            b
+        }else{
+            println("不知道")
+            404
+        }
+        println("c的返回值为$c")
+    }
+
+    上面的代码可以简写为
+    c = if (a > b) a else if (a < b) b else 404
+
+2.when else语句
+    else分支是必填项，除非编译器可以证明所有可能的情况都包含分支条件（例如，使用 enum类条目和密封类子类型）
+    when (x) {
+        1 -> print("x == 1")
+        2 -> print("x == 2")
+        else -> { // Note the block
+            print("x is neither 1 nor 2")
+        }
+    }
+
+    多个条件同时处理 逗号分隔：
+    when (x) {
+        0, 1 -> print("x == 0 or x == 1")
+        else -> print("otherwise")
+    }
+
+    使用任意表达式（不只是常量）作为分支条件
+    when (x) {
+        parseInt(s) -> print("s encodes x")
+        else -> print("s does not encode x")
+    }
+
+    可以检查一个值是否在范围或集合中：
+    when (x) {
+        in 1..10 -> print("x is in the range")
+        in validNumbers -> print("x is valid")
+        !in 10..20 -> print("x is outside the range")
+        else -> print("none of the above")
+    }
+
+    检查值是否是特定类型的值
+    fun hasPrefix(x: Any) = when(x) {
+        is String -> x.startsWith("prefix")
+        else -> false
+    }
+
+    可以用作if链的替代品 如果未提供参数，则分支条件只是布尔表达式，并在其条件为 true 时执行分支：
+    when {
+        x.isOdd() -> print("x is odd")
+        y.isEven() -> print("y is even")
+        else -> print("x+y is odd.")
+    }
+
+    可以使用以下语法在变量中捕获对象：
+    fun Request.getBody() =
+            when (val response = executeRequest()) {
+                is Success -> response.body
+                is HttpError -> throw HttpException(response.status)
+            }
+
+3.for循环
+    只有具有iterator(迭代器)的类型可以迭代，它们包含了以下3种方法
+        iterator()
+        next()
+        hasNext()
+
+    用于循环遍历任何提供迭代器的循环
+    for (item: Int in ints) {
+        // ...
+    }
+
+    若要迭代一系列数字，请使用范围表达式
+    for (i in 1..3) {
+        println(i)
+    }
+    for (i in 6 downTo 0 step 2) {
+        println(i)
+    }
+
+    如果要通过具有索引的数组或列表进行迭代，可以这样操作：
+    for (i in array.indices) {
+        println(array[i])
+    }
+
+4.while 循环
+    while (x > 0) {
+        x--
+    }
+
+    do {
+        val y = retrieveData()
+    } while (y != null) // y is visible here!
+
+5.with 语句
+    通过上下文中的对象，调用其方法，或者执行一些运算
+    在调用方法时不用输对象名称了
+    var arr = intArrayOf(1, 33, 4, 54, 6, 78, 5)
+    with(arr){
+        println("数组的长度为 $size")
+        println("获取某个元素：${get(4)}")
+    }
+
+6.run 代码块
+    作用就是 把有紧密关系的代码，放在代码块中，程序正常先后执行，和with 循环的代码块一个效果
+    run { for (i in 1..10) print(i)
+        }
+
+
+
+
