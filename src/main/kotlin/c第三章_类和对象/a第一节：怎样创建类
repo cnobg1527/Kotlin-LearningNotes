@@ -1,0 +1,288 @@
+kotlin中，完整的类可以包含：
+
+    构造函数和初始化器块
+    属性
+    方法函数
+    嵌套类和内部类
+    对象声明
+
+
+1.Kotlin 中的类使用关键字class声明：
+    class Invoice { /*...*/ }
+
+2.类声明由 类名称、类标头（指定其类型参数、主构造函数等）和类正文组成，由大括号包围。标头和正文都是可选的;如果类没有正文，可以省略大括号。
+    class Empty
+
+3.Kotlin 中的类可以具有主构造函数和一个或多个辅助构造函数。主构造函数是类标头的一部分：它位于类名称（和可选类型参数）之后。
+    class Person constructor(firstName: String) { /*...*/ }
+    如果主构造函数没有任何注释或可见性修改器，可以省略构造函数关键字：
+    class Person(firstName: String) { /*...*/ }
+    主构造函数不能包含任何代码。初始化代码可以放置在初始化块中，这些块以init 关键字为前缀。
+    在实例初始化期间，初始化器块的执行顺序与在类体中显示的顺序相同，与属性初始化器交错：
+    class InitOrderDemo(name: String) {
+        val firstProperty = "First property: $name".also(::println)
+        init {
+            println("First initializer block that prints ${name}")
+        }
+        val secondProperty = "Second property: ${name.length}".also(::println)
+        init {
+            println("Second initializer block that prints ${name.length}")
+        }
+    }
+
+4.从主构造函数声明属性并初始化它们，Kotlin 具有简洁的语法：
+  class Person(val firstName: String, val lastName: String, var age: Int) { /*...*/ }
+  声明类属性时可以使用尾随逗号：更容易阅读
+  class Person(
+      val firstName: String,
+      val lastName: String,
+      var age: Int, // trailing comma
+  ) { /*...*/ }
+  在主构造函数中声明的属性可以是可变 （var） 或只读 （val）
+
+5.如果构造函数具有注释或可见性修饰符，则构造函数关键字是必需的，并且修饰符先于它：
+  class Customer public @Inject constructor(name: String) { /*...*/ }
+
+6.类还可以声明辅助构造函数，该构造函数使用constructor前缀：
+  class Person {
+      var children: MutableList<Person> = mutableListOf()
+      constructor(parent: Person) {
+          parent.children.add(this)
+      }
+  }
+7.如果类具有主构造函数，则每个辅助构造函数都需要通过另一个辅助构造函数直接或间接地委托给主构造函数
+    class Person(val name: String) {
+        var children: MutableList<Person> = mutableListOf()
+        constructor(name: String, parent: Person) : this(name) {
+            parent.children.add(this)
+        }
+    }
+8.init初始化块，会在初始化构造器constructor 之前执行
+    class Constructors {
+        init {
+            println("Init block")
+        }
+        constructor(i: Int) {
+            println("Constructor")
+        }
+    }
+9.类即使没有显式的声明构造器 默认是有空参的构造器的，可见性为public
+    如果不希望类具有公共构造函数，则需要声明具有非默认可见性的空主构造函数：
+    class DontCreateMe private constructor () { /*...*/ }
+    注意：在 JVM 上，如果主构造函数的所有参数都具有默认值，编译器将生成一个其他无参数构造函数
+    ，该构造函数将使用默认值。这使得 Kotlin 更容易使用 Jackson 或 JPA 等库，这些库通过无参数构造函数创建类实例。
+    class Customer(val customerName: String = "")
+
+
+10.创建类实例， 类名+()
+    若要创建类的实例，我们调用构造函数，就像它是常规函数一样：
+    val invoice = Invoice()
+    val customer = Customer("Joe Smith")    //创建类实例
+
+11.类的继承
+    Kotlin 中的所有类都有一个通用的超类 Any
+    class Example // Implicitly inherits from Any
+
+    Any自带有三种方法：//所以出门创建的类即使没有显式声明 继承any类 也默认有这三种方法
+        equals()
+        hashCode()
+        toString()
+
+    默认情况下创建的类是最终类：它们不能继承。
+    若要使类可继承，请用open关键字标记它。
+    open class Base //Class is open for inheritance
+
+    若要声明显式超类型，请将类型放在类标头中的冒号之后：
+    open class Base(p: Int)
+    class Derived(p: Int) : Base(p)
+
+    如果派生类具有主构造函数，则基类可以（而且必须）使用主构造函数的参数在那里初始化。
+    如果派生类没有主构造函数，则每个辅助构造函数必须使用 super 关键字初始化基类型，
+    或者委托给另一个构造函数。请注意，在这种情况下，不同的辅助构造函数可以调用基类型的不同构造函数：
+    class MyView : View {
+        constructor(ctx: Context) : super(ctx)
+        constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
+    }
+
+12.重写方法：
+   Kotlin 需要显式修改器来表示可重写成员（我们称它们为 open）和 override：
+   open class Shape {
+       open fun draw() { /*...*/ }      //open关键字修饰的方法， 可以被重写
+       fun fill() { /*...*/ }           //此方法不能重写
+   }
+   class Circle() : Shape() {
+       override fun draw() { /*...*/ }  //重写关键字 override
+   }
+   标记override的方法默认也是open，即可能在子类中重写它。如果要禁止重新覆盖，请使用final：
+   open class Rectangle() : Shape() {
+       final override fun draw() { /*...*/ }
+   }
+
+13.重写属性
+    和方法重写一样 被重写的属性也需要使用open关键字
+    并且重写的属性类型 和符类必须兼容
+    open class Shape {
+        open val vertexCount: Int = 0   //整型属性
+    }
+    class Rectangle : Shape() {
+        override val vertexCount = 4    //重写 依然是整型
+    }
+
+    方法可可以在构造器中重写
+    interface Shape {
+        val vertexCount: Int
+    }
+    class Rectangle(override val vertexCount: Int = 4) : Shape // Always has 4 vertices
+    class Polygon : Shape {
+        override var vertexCount: Int = 0  // Can be set to any number later
+    }
+
+14.派生类的初始化顺序
+    在派生类的新实例构造过程中，基类初始化作为第一步完成
+    在设计基类时，应避免在构造函数、属性初始化器和init 块中使用开放成员。
+
+15.派生类中的代码可以使用super关键字 调用其超类函数和属性
+   open class Rectangle {
+       open fun draw() { println("Drawing a rectangle") }
+       val borderColor: String get() = "black"
+   }
+
+   class FilledRectangle : Rectangle() {
+       override fun draw() {
+           super.draw()
+           println("Filling the rectangle")
+       }
+
+       val fillColor: String get() = super.borderColor
+   }
+
+16.在内部类中，使用super@Outerclass关键字访问外部类的超类：
+   class FilledRectangle: Rectangle() {
+       override fun draw() {
+           val filler = Filler()
+           filler.drawAndFill()
+       }
+
+       inner class Filler {     //inner关键字 声明内部类
+           fun fill() { println("Filling") }
+           fun drawAndFill() {
+               super@FilledRectangle.draw() // 调用外部类中的方法 使用supper@外部类名.方法名
+               fill()                       //这里的方法 是内部类的fill（）方法
+               println("Drawn a filled rectangle with color ${super@FilledRectangle.borderColor}")
+           }
+       }
+   }
+
+17.重写规则
+    在 Kotlin中，实现继承受以下规则监管：
+        如果一个类从其直接的超类中继承同一成员的多个实现，它必须重写此成员并提供自己的实现
+        为了表示采用继承实现的超类型，我们使用尖括号中的超类型名称进行超限定，例如：super<Base>
+    open class Rectangle {
+        open fun draw() { /* ... */ }
+    }
+
+    interface Polygon {
+        fun draw() { /* ... */ } // interface members are 'open' by default
+    }
+
+    class Square() : Rectangle(), Polygon {
+        override fun draw() {
+            super<Rectangle>.draw() // 调用超类的方法
+            super<Polygon>.draw() // 同时调用接口的方法
+        }
+
+18.抽象类
+    类及其一些成员可以声明为抽象 不需要用 open 来注释抽象类或函数
+    抽象类中可以包含实现方法 和抽象方法， 包含抽象方法的类一定是抽象类
+    abstract class Base（）{
+    }
+
+    我们可以用抽象的开放式成员覆盖非抽象开放成员
+    open class Polygon {
+        open fun draw() {}
+    }
+
+    abstract class Rectangle : Polygon() {
+        abstract override fun draw()        //继承了普通类 ，把其中的方法修改为抽象方法
+    }
+
+19.属性和方法
+    Kotlin 类中的属性可以使用 var 关键字声明为可变，也可以使用 val 关键字声明为只读。
+    class Address {
+        var name: String = "Holmes, Sherlock"
+        var street: String = "Baker"
+        var city: String = "London"
+        var state: String? = null
+        var zip: String = "123456"
+    }
+    要使用属性，只需按名称引用它：
+    fun copyAddress(address: Address): Address {
+        val result = Address() // 创建类实例
+        result.name = address.name //
+        result.street = address.street
+        // ...
+        return result
+    }
+
+    声明属性的完整语法是
+    var 属性名称: 类型 = 初始值      //初始化器、getter 和 setter 是可选的
+        get() = this.xxx
+        set() = this.xxx
+
+    val声明的属性 是不能有setter方法的， 类型如果可以通过初始化值推断，也可以不写
+
+    如果需要更改访问器的可见性或注释它，但不需要更改默认实现，可以定义访问器而不定义其正文：
+    var setterVisibility: String = "abc"
+        private set // the setter is private and has the default implementation
+    var setterWithAnnotation: Any? = null
+        @Inject set // annotate the setter with Inject
+
+    可以使用标识符在访问器中引用此支持字段：field字段
+    标识符只能在属性的set方法中使用field
+    var counter = 0
+        set(value) {
+            if (value >= 0) field = value
+        }
+
+
+    如果要执行一些不适合此"隐式支持字段"方案，则始终可以回退到具有支持属性：
+    private var _table: Map<String, Int>? = null
+    public val table: Map<String, Int>
+        get() {
+            if (_table == null) {
+                _table = HashMap() //创建hashmap
+            }
+            return _table ?: throw AssertionError("Set to null by another thread")
+        }
+
+20.编译时间常量
+   如果在编译时知道只读属性的值，则使用const修饰符将它标记为编译时间常量
+   此类属性需要满足以下要求：
+        顶层，或对象声明或配套对象的成员。
+        使用类型或基元类型的值初始化String
+        无自定义获取器
+        此类属性可用于注释：
+
+        const val SUBSYSTEM_DEPRECATED: String = "This subsystem is deprecated"//这个方法已经过时了
+        @Deprecated(SUBSYSTEM_DEPRECATED) fun foo() { ... }//调用@Deprecated注释此方法 已经过时
+
+21.后期初始化属性和变量
+    声明为具有非 null 类型的属性必须在构造函数中初始化。然而，这通常不方便
+    可以使用修饰符标记属性：lateinit  //延迟初始
+    public class MyTest {
+        lateinit var subject: TestSubject
+        @SetUp fun setup() {
+            subject = TestSubject()
+        }
+        @Test fun test() {
+            subject.method()  // dereference directly
+        }
+    }
+
+23.若要检查 是否已初始化 ，请在对该属性的引用上使用：lateinit var.isInitialized
+   if (foo::bar.isInitialized) {
+       println(foo.bar)
+   }
+
+
+
