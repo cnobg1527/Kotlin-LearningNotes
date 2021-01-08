@@ -21,8 +21,8 @@ open class Woman(name: String) {  //最初构造器
         Woman.add()
         Woman.minus()
     }
-
-    inner class SmallWoman {    //内部类只能通过对象调用
+    //internal声明可见性只能是当前包里，
+     internal inner class SmallWoman {    //内部类只能通过当前类 或子类对象调用
         var height: Int
 
         init {
@@ -73,6 +73,10 @@ fun main() {
     println("****************************************")
     obg2.big = 88888
     println(obg2.big)
+
+
+
+
 
 
 }
