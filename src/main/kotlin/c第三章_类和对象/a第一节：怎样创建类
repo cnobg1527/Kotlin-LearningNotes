@@ -156,23 +156,6 @@ kotlin中，完整的类可以包含：
        val fillColor: String get() = super.borderColor
    }
 
-16.在内部类中，使用super@Outerclass关键字访问外部类的超类：
-   class FilledRectangle: Rectangle() {
-       override fun draw() {
-           val filler = Filler()
-           filler.drawAndFill()
-       }
-
-       inner class Filler {     //inner关键字 声明内部类
-           fun fill() { println("Filling") }
-           fun drawAndFill() {
-               super@FilledRectangle.draw() // 调用外部类中的方法 使用supper@外部类名.方法名
-               fill()                       //这里的方法 是内部类的fill（）方法
-               println("Drawn a filled rectangle with color ${super@FilledRectangle.borderColor}")
-           }
-       }
-   }
-
 17.重写规则
     在 Kotlin中，实现继承受以下规则监管：
         如果一个类从其直接的超类中继承同一成员的多个实现，它必须重写此成员并提供自己的实现

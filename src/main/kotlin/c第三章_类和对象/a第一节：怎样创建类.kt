@@ -44,14 +44,16 @@ open class Woman(name: String) {  //最初构造器
         }
     }
 }
-interface Usb{
-    fun show(){
+
+interface Usb {
+    fun show() {
         println("我是接口")
     }
 }
 
-class Obg(name: String, age: Int, id: Int, size: Int) : Woman(name, age, id) ,Usb{
+class Obg(name: String, age: Int, id: Int, size: Int) : Woman(name, age, id), Usb {
     val size = size
+    var big: Int? = null        //任何类中的属性都必须赋初始值  不然会包错
 
     override fun show() {
         super<Usb>.show()       //类和接口都有相同方法时 需要在箭头符类指名具体类，以免混淆
@@ -66,6 +68,11 @@ fun main() {
     var obg1 = obg.SmallWoman()             //也可以通过对象创建内部类对象，再调用方法
     obg1.draw()
     println("****************************************")
-    var obg2 = Obg("hello",23,45,66)//创建子类对象
+    var obg2 = Obg("hello", 23, 45, 66)//创建子类对象
     obg2.show()
+    println("****************************************")
+    obg2.big = 88888
+    println(obg2.big)
+
+
 }
