@@ -1,0 +1,97 @@
+1.Kotlin 中的接口可以包含抽象方法的声明以及方法实现。与抽象类不同的是接口无法存储状态。
+    它们可以具有属性，但这些属性需要抽象或提供访问器实现。
+
+2.使用interface关键字界面定义
+    interface MyInterface {
+        fun bar()
+        fun foo() {
+          // optional body
+        }
+    }
+
+3.通过类或者对象实现接口
+    类或对象可以实现一个或多个接口
+    class Child : MyInterface {
+        override fun bar() {
+            // body
+        }
+    }
+
+4.可以在接口中声明属性。在接口中声明的属性可以是抽象的，也可以为访问者提供实现
+5.接口可以从其他接口派生，因此既为其成员提供实现，又声明新的函数和属性
+    interface Named {
+        val name: String
+    }
+    interface Person : Named {
+        val firstName: String
+        val lastName: String
+
+        override val name: String get() = "$firstName $lastName"
+    }
+    data class Employee(
+        // implementing 'name' is not required
+        override val firstName: String,
+        override val lastName: String,
+        val position: Position
+    ) : Person
+
+6.同名方法冲突解决super
+    interface A {
+        fun foo() { print("A") }
+        fun bar()
+    }
+
+    interface B {
+        fun foo() { print("B") }
+        fun bar() { print("bar") }
+    }
+
+    class C : A {
+        override fun bar() { print("bar") }
+    }
+
+    class D : A, B {
+        override fun foo() {
+            super<A>.foo()
+            super<B>.foo()
+        }
+
+        override fun bar() {
+            super<B>.bar()
+        }
+    }
+    接口A和B都声明函数foo（） 和 bar（）。
+    它们都实现foo（），但只有B实现bar（） （bar（）未在 A 中标记为抽象，
+     因为这是接口的默认值， 如果函数没有正文）。现在，如果我们从 A 派生一个具体的类 C，显然，我们必须重写bar（）并提供一个实现。
+
+    但是，如果我们从A和B派生D ，我们需要实现从多个接口继承的所有方法，并指定D应如何实现它们。
+    此规则既适用于我们继承了单个实现（bar））和多个实现（foo）的方法。
+
+7.函数式接口
+    只有一个抽象方法的接口称为功能接口或函数接口。
+    函数接口可以有多个非抽象成员，但只能有一个抽象成员。
+    fun interface KRunnable {
+       fun invoke()
+    }
+
+    函数式接口可以使用lambda表达式，使代码更简洁
+    例如，请考虑以下 Kotlin 功能接口：
+    fun interface IntPredicate {
+       fun accept(i: Int): Boolean
+    }
+
+    如果不使用 SAM 转换，则需要编写这样的代码：
+    val isEven = object : IntPredicate {
+       override fun accept(i: Int): Boolean {
+           return i % 2 == 0
+       }
+    }
+
+    通过利用 Kotlin 的 SAM 转换，您可以编写以下等效代码：
+    val isEven = IntPredicate { it % 2 == 0 }
+
+
+
+
+
+

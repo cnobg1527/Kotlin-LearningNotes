@@ -1,0 +1,45 @@
+1.我们经常创建其主要目的是保存数据的类。
+    在此类中，一些标准函数和实用程序功能通常可机械地从数据派生。
+    在 Kotlin 中，这称为数据类，并标记为 ：data
+    data class User(val name: String, val age: Int)
+
+    在 JVM 上，如果生成的类需要具有无参数构造函数，则必须指定所有属性的默认值（请参阅构造函数）。
+    data class User(val name: String = "", val age: Int = 0)
+
+2.编译器自动从主构造函数中声明的所有属性派生以下成员：
+  equals()/hashCode()对;
+  toString()窗体"User(name=John, age=42)";
+  component（）函数对应于其声明顺序的属性;
+  copy()拷贝。
+
+3.为了确保生成的代码的一致性和有意义的行为，数据类必须满足以下要求：
+  1.主构造函数需要至少有一个参数;
+  2.所有主构造函数参数都需要标记为或val var;
+  3.数据类不能是抽象的、开放的、密封的或内部的;
+
+4.复制
+  通常情况下，我们需要复制对象来更改其某些属性，但其余属性保持不变。这是生成函数的。对于上述类，其实现将如下所示：copy()User
+
+  fun copy(name: String = this.name, age: Int = this.age) = User(name, age)
+  这允许我们编写：
+
+  val jack = User(name = "Jack", age = 1)
+  val olderJack = jack.copy(age = 2)
+  请注意，调用执行浅层复制，这意味着副本的引用属性指向与原始对象的引用相同的对象
+  但是，副本具有自己的基元属性，而不是链接到原始属性
+  var userJack = User(name="Jack")
+  var address = Address(user = userJack, city = "London")
+  var addressCopy = address.copy()
+
+  addressCopy.city = "New York"
+  addressCopy.user.name = "John"
+
+5.数据类和析构声明
+  为数据类生成的组件函数支持其用于析构声明：
+  val jane = User("Jane", 35)
+  val (name, age) = jane
+  println("$name, $age years of age")
+
+
+
+

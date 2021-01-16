@@ -1,0 +1,77 @@
+1.Kotlin 提供使用新功能扩展类的功能，可以从无法修改的第三方库为类编写新函数。
+    此类函数可用于以通常的方式调用，就像它们是原始类的方法一样。
+    这种机制被称为扩展函数。还有一些扩展属性允许您为现有类定义新属性。
+    基本格式
+    fun 类<>.扩展方法(参数){}
+
+    class Extend
+
+    fun Extend.show(){
+        println("这是一个扩展方法") //原有类并无此方法，通过kotlin的特性，为原有类扩展了一个方法
+    }
+    特性：
+        1.不会修改它们扩展的类
+        2.类的扩展方法 只能由扩展类对象调用，与原有类的子父类无关
+        3.若扩展方法与类本身的方法重名， 则始终调用类本身的方法
+        4.扩展方法可以重载 类中的同名方法，修改其不同的参数类型。。。
+
+2.扩展属性
+  与函数类似，Kotlin 支持扩展属性：
+  val <T> List<T>.lastIndex: Int
+      get() = size - 1
+
+3.如果类定义了一个伴生对象，还可以为伴生对象定义扩展函数和属性。
+  class MyClass {
+      companion object { }  // will be called "Companion"
+  }
+
+  fun MyClass.Companion.printCompanion() { println("companion") }
+
+  fun main() {
+      MyClass.printCompanion()
+  }
+
+4.大多数时候，我们在顶级定义扩展 - 直接在包下：
+  package org.example.declarations
+  fun List<String>.getLongestString() { /*...*/}
+  若要在其声明包之外使用此类扩展，我们需要在调用站点导入它：
+  package org.example.usage
+
+  import org.example.declarations.getLongestString
+
+  fun main() {
+      val list = listOf("red", "green", "blue")
+      list.getLongestString()
+  }
+
+5.将扩展声明为成员
+  在类中，您可以声明另一个类的扩展。在这样的扩展中，有多个隐式接收器- 可以在没有限定符的情况下访问它们的对象成员。
+  声明分机的类的实例称为调度接收方，扩展方法的接收方类型的实例称为扩展接收方。
+
+  class Host(val hostname: String) {
+      fun printHostname() { print(hostname) }
+  }
+
+  class Connection(val host: Host, val port: Int) {
+       fun printPort() { print(port) }
+
+       fun Host.printConnectionString() {
+           printHostname()   // calls Host.printHostname()
+           print(":")
+           printPort()   // calls Connection.printPort()
+       }
+
+       fun connect() {
+           /*...*/
+           host.printConnectionString()   // calls the extension function
+       }
+  }
+
+  fun main() {
+      Connection(Host("kotl.in"), 443).connect()
+      //Host("kotl.in").printConnectionString(443)  // error, the extension function is unavailable outside Connection
+  }
+
+6.
+
+
