@@ -1,0 +1,47 @@
+1.有时，业务逻辑需要围绕某种类型创建包装器。
+    但是，由于额外的堆分配，它引入了运行时开销。
+    此外，如果包装类型是原始的，则性能打击是可怕的，因为原始类型通常由运行时大量优化，而其包装类型则没有得到任何特殊处理。
+    为了解决这些问题，Kotlin 引入了一种称为 nline class的特殊类，它通过在类的名称之前放置一个inline修饰符来声明：
+
+    inline class Password(val value: String)
+
+    内联类必须在主构造函数中初始化单个属性 val securePassword = Password("Don't try this in production")
+
+2.内联类支持常规类的一些功能。特别是，允许它们声明属性和函数：
+  inline class Name(val s: String) {
+      val length: Int
+          get() = s.length
+      fun greet() {
+          println("Hello, $s")
+      }
+  }
+  fun main() {
+      val name = Name("Kotlin")
+      name.greet() // method `greet` is called as a static method
+      println(name.length) // property getter is called as a static method
+  }
+
+3.但是，内联类成员有一些限制：
+  内联类不能有init块
+  内联类属性不能具有支持字段
+  因此，内联类只能具有简单的可计算属性（没有后期/委派属性）
+  由于内联类可能既表示为基础值，又表示为包装器，因此引用相等性对于它们来说毫无意义，因此是被禁止的
+
+4.允许从接口继承内联类：内联类不能被继承，所以必须是最终类
+  interface Printable {
+      fun prettyPrint(): String
+  }
+  inline class Name(val s: String) : Printable {
+      override fun prettyPrint(): String = "Let's $s!"
+  }
+  fun main() {
+      val name = Name("Kotlin")
+      println(name.prettyPrint()) // Still called as a static method
+  }
+
+
+4.内联类与类型别名
+  一开始，内联类可能看起来非常类似于类型别名。实际上，两者都似乎引入了一种新类型，并且两者都将在运行时表示为基础类型。
+  但是，关键的区别是类型别名与它们的基础类型（以及具有相同基础类型的其他类型别名）的赋值兼容，而内联类则不兼容。
+  换句话说，内联类引入了一种真正的新类型，与只引入现有类型的替代名称（别名）的类型别名相反：
+

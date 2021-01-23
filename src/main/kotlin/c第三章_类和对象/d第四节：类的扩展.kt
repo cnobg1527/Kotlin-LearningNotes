@@ -27,7 +27,10 @@ fun Extend.call(str:String){    //如果采用传入参数的方法，就会调�
 
 
 //以下main方法主要考虑这几个类都扩展了那些方法 重写了什么方法，类中可使用什么方法
-open class Base { }
+open class Base {
+    open fun printMessage() {}
+    open fun printMessageLine() {}
+}
 
 class Derived : Base() { }
 

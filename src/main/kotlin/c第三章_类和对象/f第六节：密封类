@@ -1,0 +1,18 @@
+密封类特性
+    密封类用于表示受限类层次结构，当值可以具有来自有限集的一个类型，但不能具有任何其他类型时。
+    密封类本身也是抽象类，不能直接实例化
+    密封类构造器必须是私有的
+    密封类的子类，必须声明在同一文件中，扩展密封类子类（间接继承符）的类可以放置在任意位置，而不一定放在同一个文件中。
+
+1.若要声明密封类，请将sealed修饰符放在类的名称之前。
+    sealed class Expr
+    data class Const(val number: Double) : Expr() //数据类继承至密封类
+    data class Sum(val e1: Expr, val e2: Expr) : Expr()
+    object NotANumber : Expr() //匿名类继承了密封类
+
+
+
+
+
+
+

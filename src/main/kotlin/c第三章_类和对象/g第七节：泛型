@@ -1,0 +1,48 @@
+1.Kotlin 中的类可以有泛型参数：
+    class Box<T>(t: T) {
+         var value = t
+     }
+    要创建此类的实例，我们需要提供类型参数：
+    val box: Box<Int> = Box<Int>(1) //标准写法（冗余写法）
+    如果可以推断参数，例如从构造函数参数或其他某种方法推断，允许省略类型参数：
+    val box = Box(1)
+
+2.in和out
+    interface Source<out T> {   //思考下面几个泛型例子
+        fun nextT(): T
+    }
+    interface Comparable<in T> {
+        operator fun compareTo(other: T): Int
+    }
+    class Array<T>(val size: Int) {
+        fun get(index: Int): T { ... }
+        fun set(index: Int, value: T) { ... }
+    }
+
+3.*通配符
+    如果泛型类型具有多个类型参数，每个参数都可以独立映射。
+    Function<*, String>意味 着Function<in Nothing, String>;
+    Function<Int, *>意味 着Function<Int, out Any?>;
+    Function<*, *>意味 着。Function<in Nothing, out Any?>
+
+4.泛型函数
+    不仅类可以具有类型参数。函数也可以。类型参数放置在函数名称之前：
+    fun <T> singletonList(item: T): List<T> {
+        // ...
+    }
+    fun <T> T.basicToString(): String {  // extension function
+      // ...
+    }
+    若要调用泛型函数，请在调用站点上指定函数名称后的类型参数：
+    val l = singletonList<Int>(1)
+    如果可以从上下文中推断类型参数，可以省略它们，因此以下示例也有效：
+    val l = singletonList(1)
+
+
+
+
+
+
+
+
+

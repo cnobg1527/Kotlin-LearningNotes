@@ -1,0 +1,165 @@
+1.委派模式已被证明是实现继承的一个很好的替代方法，Kotlin 支持它本机要求零样板代码。
+    类可以通过将其所有公共成员委派给指定对象来实现接口：
+  interface Base {
+      fun print()
+  }
+  class BaseImpl(val x: Int) : Base {
+      override fun print() { print(x) }
+  }
+  class Derived(b: Base) : Base by b        //注意
+  fun main() {
+      val b = BaseImpl(10)
+      Derived(b).print()
+  }
+
+2.覆盖由委派实现的接口的成员
+  覆盖工作如预期：编译器将使用您的实现，而不是委托对象中的实现。如果我们添加到 ，程序将打印"abc"而不是"10"
+  interface Base {
+      fun printMessage()
+      fun printMessageLine()
+  }
+
+  class BaseImpl(val x: Int) : Base {
+      override fun printMessage() { print(x) }
+      override fun printMessageLine() { println(x) }
+  }
+
+  class Derived(b: Base) : Base by b {
+      override fun printMessage() { print("abc") }
+  }
+
+  fun main() {
+      val b = BaseImpl(10)
+      Derived(b).printMessage()
+      Derived(b).printMessageLine()
+  }
+
+  但是请注意，这样重写的成员不会从委托对象的成员调用，而委托对象只能访问其接口成员的自身实现：
+  interface Base {
+      val message: String
+      fun print()
+  }
+  class BaseImpl(val x: Int) : Base {
+      override val message = "BaseImpl: x = $x"
+      override fun print() { println(message) }
+  }
+  class Derived(b: Base) : Base by b {
+      override val message = "Message of Derived"       //
+  }
+  fun main() {
+      val b = BaseImpl(10)
+      val derived = Derived(b)
+      derived.print()
+      println(derived.message)
+  }
+
+
+3.委托属性
+    有一些常见的属性类型，虽然我们可以在每次需要它们时手动实现它们，但可以一次一次地实现它们，并放入库中。示例包括：
+    惰性属性：仅在第一次访问时计算值;
+    可观察属性：侦听器收到有关对此属性的更改通知;
+    将属性存储在地图中，而不是每个属性的单独字段。
+     属性委托不必实现任何接口，但它们必须提供函数（参数）
+    class Delegate {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): String {
+            return "$thisRef, thank you for delegating '${property.name}' to me!"
+        }
+
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {
+            println("$value has been assigned to '${property.name}' in $thisRef.")
+        }
+    }
+    为了涵盖这些（和其他）情况，Kotlin支持委派的属性：
+    class Example {
+        var p: String by Delegate()
+    }
+
+    Kotlin 标准库为几种有用的委托提供了工厂方法：
+    lazy（）是一个采用 lambda 并返回实例的函数，该实例可以用作实现 lazy 属性的委托：
+    执行 lambda 传递并记住结果的第一个调用，随后调用仅返回记住的结果
+    惰性属性的计算是同步的：该值仅在一个线程中计算，并且所有线程都将看到相同的值
+    val lazyValue: String by lazy {
+        println("computed!")
+        "Hello"
+    }
+    fun main() {
+        println(lazyValue)
+        println(lazyValue)
+    }
+
+4.委托.可观察（））采用两个参数：初始值和修改处理程序。
+    每次分配给属性时（在执行赋值后），都会调用处理程序。它有三个参数：要分配给的属性、旧值和新值：
+    import kotlin.properties.Delegates
+    class User {
+        var name: String by Delegates.observable("<no name>") {
+            prop, old, new ->
+            println("$old -> $new")
+        }
+    }
+    fun main() {
+        val user = User()
+        user.name = "first"
+        user.name = "second"
+    }
+
+
+5.Kotlin 1.4，属性可以将其获取器和设置器委托给另一个属性。此类委派可用于顶级属性和类属性 委托属性可以是：
+    顶级属性
+    同一类的成员或扩展属性
+    另一类的成员或扩展属性
+    若要将属性委托给另一个属性，请使用委托名称中的正确限定符：：
+    class MyClass(var memberInt: Int, val anotherClassInstance: ClassWithDelegate) {
+        var delegatedToMember: Int by this::memberInt
+        var delegatedToTopLevel: Int by ::topLevelInt
+
+        val delegatedToAnotherClass: Int by anotherClassInstance::anotherClassInt
+    }
+    var MyClass.extDelegated: Int by ::topLevelInt
+
+    例如，当您想要以向后兼容的方式重命名属性时，这可能很有用：引入新属性，使用注释注释旧属性，并委托其实现。@Deprecated
+    class MyClass {
+       var newName: Int = 0
+       @Deprecated("Use 'newName' instead", ReplaceWith("newName"))
+       var oldName: Int by this::newName
+    }
+
+    fun main() {
+       val myClass = MyClass()
+       myClass.oldName = 42
+       println(myClass.newName) // 42
+    }
+
+    在地图中存储属性
+    一个常见的用例是将属性的值存储在地图中。这经常出现在诸如解析 JSON 或做其他"动态"事情等应用程序中。
+    在这种情况下，您可以使用映射实例本身作为委派属性的委托。
+
+    class User(val map: Map<String, Any?>) {
+        val name: String by map
+        val age: Int     by map
+    }
+    在此示例中，构造函数采用映射：
+
+    val user = User(mapOf(
+        "name" to "John Doe",
+        "age"  to 25
+    ))
+    委派的属性从此映射中具有值（通过字符串键 = 属性名称）：
+
+    println(user.name) // Prints "John Doe"
+    println(user.age)  // Prints 25
+    目标平台： Jvm在科特林诉 1.4.20 上运行
+    如果使用 而不是只读，这也可以适用于 var 的属性：MutableMapMap
+
+    class MutableUser(val map: MutableMap<String, Any?>) {
+        var name: String by map
+        var age: Int     by map
+    }
+    
+6.属性委托要求
+    只读属性（val），委托必须提供具有以下参数的运算符函数：getValue()
+    可变属性（var），委托必须额外提供具有以下参数的运算符函数：setValue()
+
+
+
+
+

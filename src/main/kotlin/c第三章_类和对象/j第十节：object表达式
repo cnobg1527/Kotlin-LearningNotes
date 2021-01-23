@@ -1,0 +1,83 @@
+1.对象表达式和声明
+    有时我们需要创建一个稍微修改某些类的对象，而不显式声明一个新的子类。Kotlin 使用对象表达式和对象声明处理此情况。
+    创建从某种类型（或类型）继承的匿名类的对象，我们编写：
+    window.addMouseListener(object : MouseAdapter() {
+        override fun mouseClicked(e: MouseEvent) { /*...*/ }
+        override fun mouseEntered(e: MouseEvent) { /*...*/ }
+    })
+
+2.如果超类型具有构造函数，则必须将适当的构造函数参数传递给它。许多超类型可以指定为冒号后逗号分隔列表：
+  open class A(x: Int) {
+      public open val y: Int = x
+  }
+  interface B { /*...*/ }
+  val ab: A = object : A(1), B {    //重写了B接口的属性
+      override val y = 15
+  }
+
+3.在任何时候，我们只是需要一个对象，并赋予它属性和方法，可以如下
+  fun foo() {
+      val adHoc = object {
+          var x: Int = 0
+          var y: Int = 0
+      }
+      print(adHoc.x + adHoc.y)
+  }
+
+4.对象表达式：
+    对象表达式中的代码可以从封闭作用域访问变量。
+    fun countClicks(window: JComponent) {
+        var clickCount = 0
+        var enterCount = 0
+        window.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+              clickCount++
+            }
+            override fun mouseEntered(e: MouseEvent) {
+                enterCount++
+            }
+        })
+        // ...
+    }
+
+5.对象声明：
+    单例在多个情况下可能很有用，而 Kotlin（Scala 之后）便于声明单例：
+    object DataProviderManager {
+        fun registerDataProvider(provider: DataProvider) {
+          // ...
+        }
+        val allDataProviders: Collection<DataProvider>
+          get() = // ...
+   }
+  这称为对象声明 ，并且它始终具有对象关键字之后的名称。与变量声明一样，对象声明不是表达式，不能在赋值语句的右侧使用。
+
+  对象声明的初始化是线程安全的，并且在第一次访问时完成。
+
+  为了引用该对象，我们直接使用其名称：
+  DataProviderManager.registerDataProvider(...)
+
+  此类对象可以具有超类型：
+  object DefaultListener : MouseAdapter() {
+      override fun mouseClicked(e: MouseEvent) { ... }
+      override fun mouseEntered(e: MouseEvent) { ... }
+  }
+
+6.伴生对象
+  类中的对象声明可以使用companion object关键字进行标记：
+  class MyClass {
+      companion object Factory {
+          fun create(): MyClass = MyClass()
+      }
+  }
+  只需使用类名称作为限定符来调用配套对象的成员：
+  val instance = MyClass.create()
+  可以省略配套对象的名称，在这种情况下，将使用该名称：Companion
+  class MyClass {
+      companion object { }
+  }
+  val x = MyClass.Companion
+
+7.对象表达式和对象声明之间有一个重要的语义差异：
+  对象表达式立即执行（并初始化），其中使用对象表达式;
+  对象声明在第一次访问时以lazily(惰性加载)初始化;
+  当加载（解析）相应类时，将初始化一个伴用对象，与 Java 静态初始化器的语义匹配。

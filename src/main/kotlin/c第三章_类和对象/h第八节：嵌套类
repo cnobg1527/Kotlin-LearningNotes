@@ -1,0 +1,53 @@
+1.类可以嵌套在其他类中：
+   class Outer {
+      private val bar: Int = 1
+      class Nested {
+          fun foo() = 2
+      }
+   }
+  val demo = Outer.Nested().foo() // == 2 这里用了匿名内部类对象
+
+2.您还可以使用嵌套接口。
+    类和接口的所有组合都是可能的：您可以在类中嵌套接口，在接口中嵌套类，在接口中嵌套接口，在接口中嵌套接口。
+
+    interface OuterInterface {
+        class InnerClass
+        interface InnerInterface
+    }
+    class OuterClass {
+        class InnerClas
+        interface InnerInterface
+   }
+
+3.内部类
+    标记为内部的嵌套类可以访问其外部类的成员。内部类包含对外部类对象的引用：
+    class Outer {
+      private val bar: Int = 1
+      inner class Inner {
+          fun foo() = bar
+      }
+    }
+    val demo = Outer().Inner().foo() // == 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

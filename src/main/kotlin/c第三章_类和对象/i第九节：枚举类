@@ -1,0 +1,38 @@
+1.Enum 类：特性：用enum关键字定义，对象是有限个数的 这样的类被称为枚举类
+    emum 类最基本的用法是实现类型安全的步法：
+    enum class Direction {
+         NORTH, SOUTH, WEST, EAST
+    }
+
+2.初始化
+    enum class Color(val rgb: Int) {
+            RED(0xFF0000),
+            GREEN(0x00FF00),
+            BLUE(0x0000FF)
+    }
+
+3.Kotlin 中的 Enum 类具有合成方法，允许列出定义的常量，并按其名称获取一个列点常量。
+    EnumClass.valueOf(value: String): EnumClass
+    EnumClass.values(): Array<EnumClass>
+
+4.enum 类可以实现一个接口（但不是从类派生），为所有条目提供单个接口成员实现，也可以为其匿名类中的每个条目提供单独的接口成员实现。
+    这是通过将接口添加到的项类声明，如下所示：
+    enum class IntArithmetics : BinaryOperator<Int>, IntBinaryOperator {
+        PLUS {
+          override fun apply(t: Int, u: Int): Int = t + u
+        },
+        TIMES {
+          override fun apply(t: Int, u: Int): Int = t * u
+        };
+        override fun applyAsInt(t: Int, u: Int) = apply(t, u)
+  }
+
+
+
+
+
+
+
+
+
+

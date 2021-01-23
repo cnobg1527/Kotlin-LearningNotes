@@ -1,0 +1,24 @@
+1.类型别名为现有类型提供替代名称
+    如果类型名称太长，您可以引入其他较短的名称，然后改为使用新名称。
+    缩短长泛型类型很有用。例如，收缩集合类型通常很诱人：
+    typealias NodeSet = Set<Network.Node>
+    typealias FileTable<K> = MutableMap<K, MutableList<File>>
+
+    可以为函数类型提供不同的别名：
+    typealias MyHandler = (Int, String, Any) -> Unit
+    typealias Predicate<T> = (T) -> Boolean
+
+    您可以为内部类和嵌套类提供新名称：
+    class A {
+        inner class Inner
+    }
+    class B {
+        inner class Inner
+    }
+    typealias AInner = A.Inner
+    typealias BInner = B.Inner
+
+
+
+
+
