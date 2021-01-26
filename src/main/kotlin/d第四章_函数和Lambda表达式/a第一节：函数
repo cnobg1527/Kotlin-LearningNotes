@@ -1,0 +1,168 @@
+1.函数声明
+  使用fun关键字声明 Kotlin 中的函数：
+  fun double(x: Int): Int {
+      return 2 * x
+  }
+
+2.函数使用
+  调用函数使用传统方法：
+  val result = double(2)
+  调用成员函数使用点表示法：
+  Stream().read()
+
+3.参数
+  函数参数使用 Pascal 表示法定义，即名称：type 。参数使用逗号分隔。每个参数必须显式键入：
+  fun powerOf(number: Int, exponent: Int): Int { /*...*/ }
+  声明函数参数时可以使用尾随逗号：
+  fun powerOf(
+      number: Int,
+      exponent: Int,
+  ) { /*...*/ }
+
+4.默认参数
+  函数参数可以具有默认值，类型后使用=定义默认值。这减少了许多重载：
+  fun read(
+      b: Array<Byte>,
+      off: Int = 0,
+      len: Int = b.size,
+  ) { /*...*/ }
+
+5.重写方法始终使用与基方法相同的默认参数值。重写具有默认参数值的方法时，必须从签名中省略默认参数值：
+  open class A {
+      open fun foo(i: Int = 10) { /*...*/ }
+  }
+  class B : A() {
+      override fun foo(i: Int) { /*...*/ }  // No default value is allowed
+  }
+
+  如果默认参数位于没有默认值的参数之前，则只能通过调用具有命名参数的函数来使用默认值：
+  fun foo(
+      bar: Int = 0,
+      baz: Int,
+  ) { /*...*/ }
+  foo(baz = 1) // The default value bar = 0 is used
+
+  如果默认参数之后的最后一个参数是lambda，则可以作为命名参数或在括号外传递它：
+  fun foo(
+      bar: Int = 0,
+      baz: Int = 1,
+      qux: () -> Unit,
+  ) { /*...*/ }
+  foo(1) { println("hello") }     // Uses the default value baz = 1
+  foo(qux = { println("hello") }) // Uses both default values bar = 0 and baz = 1
+  foo { println("hello") }
+
+  可以使用 vararg 运算符使用名称传递可变数量的参数
+  fun foo(vararg strings: String) { /*...*/ }
+  foo(strings = *arrayOf("a", "b", "c"))
+
+6.单元返回功能
+  如果函数不返回任何有用的值，则其返回类型为Unit
+  fun printHello(name: String?): Unit {
+      if (name != null)
+          println("Hello $name")
+      else
+          println("Hi there!")
+      // `return Unit` or `return` is optional
+  }
+
+7.单表达式函数
+  当函数返回单个表达式时，可以省略大括号，并在+符号之后指定正文：
+  fun double(x: Int): Int = x * 2
+
+  当编译器可以推断出返回类型时，显式声明返回类型是可选的：
+  fun double(x: Int) = x * 2
+
+8.显式返回类型
+    除简单表达式函数之外，都应显示声明返回类型，因为程序不会推断有语句块的函数的返回值类型
+
+9.可变参数数
+  函数的参数（通常为最后一个参数）可以用修饰符标记：vararg
+  fun <T> asList(vararg ts: T): List<T> {
+      val result = ArrayList<T>()
+      for (t in ts) // ts is an Array
+          result.add(t)
+      return result
+  }
+  允许将可变数量的参数传递给函数：
+  val list = asList(1, 2, 3)
+
+  函数中只能将一个参数标记为vararg，如果参数不是列表中的最后一个参数，则可以使用命名参数语法传递以下参数的值
+  或者，如果参数具有函数类型，则通过在括号外传递 lambda。
+  我们使用分差运算符* 传递可变参数
+  val a = arrayOf(1, 2, 3)
+  val list = asList(-1, 0, *a, 4)
+
+10.中缀函数
+   使用infix 关键字标记的函数也可以使用 infix 表示法（省略调用的点和括号）。
+   Infix 函数必须满足以下要求：
+   它们必须是 类成员函数或扩展函数;
+   它们必须 只有 单个参数;
+   参数 不得接受 可变数量 的参数，并且 必须没有 默认值。
+   Infix 函数调用的优先级低于算术运算符、类型强制转换和运算符 高于布尔运算符和 - 和 - 检查以及其他一些运算符的优先级
+
+   infix fun Int.shl(x: Int): Int { ... }
+   // calling the function using the infix notation
+   1 shl 2
+   // is the same as
+   1.shl(2)
+
+11. infix 表示法在当前接收器上调用方法时，您需要显式使用this;与常规方法调用不同，它不能省略。这是确保明确解析所需的。
+   class MyStringCollection {
+       infix fun add(s: String) { /*...*/ }
+
+       fun build() {
+           this add "abc"   // Correct
+           add("abc")       // Correct
+       }
+   }
+
+12.函数声明位置范围
+   在 Kotlin 中，可以在文件中的顶层声明函数，这意味着您不需要创建一个类来保存函数。
+   除了顶级函数之外，Kotlin 函数还可以声明为本地函数，作为成员函数和扩展函数。
+
+   本地功能
+   Kotlin 支持本地函数，即另一个函数中的函数：
+   fun dfs(graph: Graph) {
+       fun dfs(current: Vertex, visited: MutableSet<Vertex>) {
+           if (!visited.add(current)) return
+           for (v in current.neighbors)
+               dfs(v, visited)
+       }
+       dfs(graph.vertices[0], HashSet())
+   }
+   本地函数 可以访问外部函数的局部变量（即闭包），因此在上述情况下，访问可以是局部变量：
+   fun dfs(graph: Graph) {
+       val visited = HashSet<Vertex>()
+       fun dfs(current: Vertex) {
+           if (!visited.add(current)) return
+           for (v in current.neighbors)
+               dfs(v)
+       }
+       dfs(graph.vertices[0])
+   }
+
+   成员函数 是定义在类或对象中的函数：
+   class Sample {
+       fun foo() { print("Foo") }
+   }
+   成员函数使用点表示法调用：
+   Sample().foo()
+
+   通用函数
+   函数可以具有使用函数名称之前的角度括号指定的泛型参数：
+   fun <T> singletonList(item: T): List<T> { /*...*/ }
+
+   尾部递归函数
+   Kotlin 支持一种称为尾部递归的功能编程风格。这允许使用循环编写某些算法，而不是使用递归函数编写，但没有堆栈溢出的风险。
+   当函数使用tailrec修饰符进行标记并满足所需的形式时，编译器将优化递归，从而留下一个基于循环的快速、高效的版本：
+   val eps = 1E-10 // "good enough", could be 10^-15
+   tailrec fun findFixPoint(x: Double = 1.0): Double =
+       if (Math.abs(x - Math.cos(x)) < eps) x else findFixPoint(Math.cos(x))
+
+
+
+
+
+
+
